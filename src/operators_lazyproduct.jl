@@ -24,7 +24,7 @@ mutable struct LazyProduct{BL,BR,F,T,KTL,BTR} <: LazyOperator{BL,BR}
         new(operators[1].basis_l, operators[end].basis_r, factor, operators,ket_l,bra_r)
     end
 end
-function LazyProduct(operators::T, factor::F=1) where {T,F}
+function LazyProduct(operators::T, factor::F=one(mapreduce(eltype, promote_type, operators))) where {T,F}
     BL = typeof(operators[1].basis_l)
     BR = typeof(operators[end].basis_r)
     ket_l=Tuple(Ket(operators[i].basis_l) for i in 2:length(operators))
@@ -37,7 +37,7 @@ end
 
 
 
-LazyProduct(operators::Vector{T}, factor=1) where T<:AbstractOperator = LazyProduct((operators...,), factor)
+LazyProduct(operators::Vector{T}, factor=one(mapreduce(eltype, promote_type, operators))) where T<:AbstractOperator = LazyProduct((operators...,), factor)
 LazyProduct(operators::AbstractOperator...) = LazyProduct((operators...,))
 LazyProduct() = throw(ArgumentError("LazyProduct needs at least one operator!"))
 
